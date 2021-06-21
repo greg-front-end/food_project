@@ -100,7 +100,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden';
-        clearTimeout(modalTimerId);
+        // clearTimeout(modalTimerId);
     }
 
     modalBtn.forEach(btn => {
@@ -118,12 +118,14 @@ window.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', modalClose);
     });
 
+    // close modal if click out
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
              modalClose();
         }
     });
 
+    // close modal if press esc on keybord
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Escape' && modal.classList.contains('show')) {
             modalClose();
@@ -131,17 +133,63 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // todo timer for open modal in four sec
     // const modalTimerId = setTimeout(openModal, 4000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-            openModal();
-            window.removeEventListener('scroll', showModalByScroll);
+            // openModal();
+            // remove the listener if scroll to end
+            // window.removeEventListener('scroll', showModalByScroll);
         }
     }
 
     window.addEventListener('scroll', showModalByScroll);
    
+    // classes for cards
+
+    class MenuCards {
+        constructor(src, alt, title, descr, price, transfer, valute, parentElement) {
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
+            this.transfer = transfer;
+            this.valute = valute;
+            this.parent = document.querySelector(parentElement);
+            this.changeToRu();
+        }
+
+        changeToRu() {
+            if (isFinite(this.price) && !isNaN(this.price)) {
+               this.price = this.price * this.transfer;
+               this.valute = ' руб';
+            }
+        }
+
+        render() {
+            const elem = document.createElement('div');
+            elem.classList.add('menu__item');
+            elem.innerHTML = `
+            <img src=${this.src} alt=${this.alt}>
+            <h3 class="menu__item-subtitle">Меню ${this.title}</h3>
+            <div class="menu__item-descr">${this.descr}</div>
+            <div class="menu__item-divider"></div>
+            <div class="menu__item-price">
+                <div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-total"><span>${this.price}</span>${this.valute}/день</div>
+            </div>`;
+            this.parent.append(elem);
+        }
+        
+    }
+
+    new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', '29', 75, '$', '.menu .container').render();
+
+    new MenuCards("img/tabs/elite.jpg", "vegy", 'Меню “Премиум”', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 49, 75, '$', '.menu .container').render();
+
+    new MenuCards("img/tabs/post.jpg", "vegy", 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 37, 75, '$', '.menu .container').render(); 
 
     
 });
