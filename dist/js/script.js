@@ -224,9 +224,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 padding: 10px;
             `;
             form.insertAdjacentElement('afterend', statusMessage);
-
-            //** If we using FormData setRequestHeader don't need **//
-            // request.setRequestHeader('Content-type', 'multipart/form-data');
             
             // create form body for send meassage
             const formData = new FormData(form);
