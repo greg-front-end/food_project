@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // Timer
-    const deadline = '2021-06-21';
+    const deadline = '2021-09-21';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -199,5 +199,62 @@ window.addEventListener('DOMContentLoaded', () => {
 
     new MenuCards("img/tabs/post.jpg", "vegy", 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 37, 75, '$', '.menu .container').render(); 
 
-    
+    // AJAX work with back-end and forms
+    const forms = document.querySelectorAll('form');
+    const message = {
+        loading: 'Loading',
+        success: 'Thank you, we will soon call you',
+        failure: 'Somthing is going wrong...'
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = message.loading;
+            form.append(statusMessage);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+            //** If we using FormData setRequestHeader don't nedd **//
+            // request.setRequestHeader('Content-type', 'multipart/form-data');
+            
+            //** but if we using JSON we using setRequestHeader */
+            request.setRequestHeader('Content-type', 'application/json');
+            // create form body for send meassage
+            const formData = new FormData(form);
+
+            // convert to object the formdata
+            const object = {};
+            formData.forEach(function(value, key) {
+                object[key] = value;
+            });
+
+            // convert the object to JSON for send back-end
+            const json = JSON.stringify(object);
+
+            // request.send(formData);
+            request.send(json);
+
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    // console.log(request.response);
+                    statusMessage.textContent = message.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = message.failure;
+                }
+            });
+        }); 
+    }
 });
