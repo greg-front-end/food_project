@@ -147,23 +147,32 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', showModalByScroll);
    
     // classes for cards
+    const getResource = async (url) => {
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+
+        return await res.json();
+    };
 
     class MenuCards {
-        constructor(src, alt, title, descr, price, transfer, valute, parentElement, ...classes) {
+        constructor(src, alt, title, descr, price, parentElement, ...classes) {
             this.src = src;
             this.alt = alt;
             this.title = title;
             this.descr = descr;
             this.price = price;
-            this.transfer = transfer;
-            this.valute = valute;
+            this.transfer = 75;
+            this.valute = '$';
             this.parent = document.querySelector(parentElement);
             this.classes = classes;
             this.changeToRu();
         }
 
         changeToRu() {
-            if (isFinite(this.price) && !isNaN(this.price)) {
+            if (isFinite(this.price) && !isNaN(this.price)) { 
                this.price = this.price * this.transfer;
                this.valute = ' руб';
             }
@@ -192,12 +201,38 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         
     }
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({img, altimg, title, descr, price}) => {
+                new MenuCards(img, altimg, title, descr, price, '.menu .container').render();
+            });
+        });
 
-    new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', '29', 75, '$', '.menu .container').render();
 
-    new MenuCards("img/tabs/elite.jpg", "vegy", 'Меню “Премиум”', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 49, 75, '$', '.menu .container').render();
+    // CREATE card with function, without class MenuCards
+    // getResource('http://localhost:3000/menu')
+    //     .then(data => createCard(data));
 
-    new MenuCards("img/tabs/post.jpg", "vegy", 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 37, 75, '$', '.menu .container').render(); 
+    // function createCard(data) {
+    //     data.forEach(({img, altimg, title, descr, price}) => {
+    //         const element = document.createElement('div');
+            
+    //         element.classList.add('menu__item');
+
+    //         element.innerHTML = `
+    //         <img src=${img} alt=${altimg}>
+    //         <h3 class="menu__item-subtitle">Меню ${title}</h3>
+    //         <div class="menu__item-descr">${descr}</div>
+    //         <div class="menu__item-divider"></div>
+    //         <div class="menu__item-price">
+    //             <div class="menu__item-cost">Цена:</div>
+    //             <div class="menu__item-total"><span>${price}</span>rub/день</div>
+    //         </div>`;
+    //         document.querySelector('.menu .container').append(element);
+    //     });
+
+    // }
+    // new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', '29', 75, '$', '.menu .container').render();
 
     // AJAX work with back-end and forms
     const forms = document.querySelectorAll('form');
@@ -209,10 +244,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // using function postData for every forms on site
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: data
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -228,21 +275,18 @@ window.addEventListener('DOMContentLoaded', () => {
             // create form body for send meassage
             const formData = new FormData(form);
 
-            // convert to object the formdata
-            const object = {};
-            formData.forEach(function(value, key) {
-                object[key] = value;
-            });
+            // convert to object the formdata old method
+            // const object = {};
+            // formData.forEach(function(value, key) {
+            //     object[key] = value;
+            // });
 
-            fetch('server.php', {
-                method: "POST",
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            }).then(data => data.text())
+            // convert to json new method
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+
+            postData('http://localhost:3000/requests', json)
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 showThanksModal(message.success);
                 statusMessage.remove();
             }).catch(() => {
@@ -277,4 +321,8 @@ window.addEventListener('DOMContentLoaded', () => {
             modalClose();
         }, 4000);
     }
+
+    fetch('db.json')
+        .then(data => data.json())
+        .then(res => console.log(res));
 });
