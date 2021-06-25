@@ -96,8 +96,8 @@ window.addEventListener('DOMContentLoaded', () => {
     // Modals
 
     const modal = document.querySelector('.modal'),
-          modalBtn = document.querySelectorAll('[data-modal]');
-        //   modalBtnClose = document.querySelectorAll('[data-close]');
+          modalBtn = document.querySelectorAll('[data-modal]'),
+          modalBtnClose = document.querySelectorAll('[data-close]');
 
     // let modalStyle = window.getComputedStyle(modal).diplay;
     function openModal() {
@@ -118,9 +118,9 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
-    // modalBtnClose.forEach(btn => {
-    //     btn.addEventListener('click', modalClose);
-    // });
+    modalBtnClose.forEach(btn => {
+        btn.addEventListener('click', modalClose);
+    });
 
     // close modal if click out
     modal.addEventListener('click', (e) => {
@@ -144,7 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
             // openModal();
             // remove the listener if scroll to end
-            // window.removeEventListener('scroll', showModalByScroll);
+            window.removeEventListener('scroll', showModalByScroll);
         }
     }
 
@@ -232,33 +232,6 @@ window.addEventListener('DOMContentLoaded', () => {
     //         });
     //     });
 
-
-    // CREATE card with function, without class MenuCards
-    // getResource('http://localhost:3000/menu')
-    //     .then(data => createCard(data));
-
-    // function createCard(data) {
-    //     data.forEach(({img, altimg, title, descr, price}) => {
-    //         const element = document.createElement('div');
-            
-    //         element.classList.add('menu__item');
-
-    //         element.innerHTML = `
-    //         <img src=${img} alt=${altimg}>
-    //         <h3 class="menu__item-subtitle">Меню ${title}</h3>
-    //         <div class="menu__item-descr">${descr}</div>
-    //         <div class="menu__item-divider"></div>
-    //         <div class="menu__item-price">
-    //             <div class="menu__item-cost">Цена:</div>
-    //             <div class="menu__item-total"><span>${price}</span>rub/день</div>
-    //         </div>`;
-    //         document.querySelector('.menu .container').append(element);
-    //     });
-
-    // }
-
-    // new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 29, '.menu .container').render();
-
     // AJAX work with back-end and forms
     const forms = document.querySelectorAll('form');
     const message = {
@@ -310,12 +283,13 @@ window.addEventListener('DOMContentLoaded', () => {
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             postData('http://localhost:3000/requests', json)
-            .then(data => {
+            .then(() => {
                 // console.log(data);
                 showThanksModal(message.success);
                 statusMessage.remove();
             }).catch(() => {
                 showThanksModal(message.failure);
+                statusMessage.remove();
             }).finally(() => {
                 form.reset();
             });
