@@ -82,6 +82,10 @@ window.addEventListener('DOMContentLoaded', () => {
             seconds.innerHTML = getZero(t.seconds);
             if (t.total <= 0) {
                 clearInterval(timeInterval);
+                days.innerHTML = '00';
+                hours.innerHTML = '00';
+                minutes.innerHTML = '00';
+                seconds.innerHTML = '00';
             }
         }      
               
@@ -146,17 +150,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', showModalByScroll);
    
-    // classes for cards
-    const getResource = async (url) => {
-        const res = await fetch(url);
-
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-        }
-
-        return await res.json();
-    };
-
+    
     class MenuCards {
         constructor(src, alt, title, descr, price, parentElement, ...classes) {
             this.src = src;
@@ -170,14 +164,14 @@ window.addEventListener('DOMContentLoaded', () => {
             this.classes = classes;
             this.changeToRu();
         }
-
+        
         changeToRu() {
             if (isFinite(this.price) && !isNaN(this.price)) { 
-               this.price = this.price * this.transfer;
-               this.valute = ' руб';
+                this.price = this.price * this.transfer;
+                this.valute = ' руб';
             }
         }
-
+        
         render() {
             const elem = document.createElement('div');
             
@@ -187,26 +181,56 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 this.classes.forEach(className => elem.classList.add(className));
             }
-
+            
             elem.innerHTML = `
             <img src=${this.src} alt=${this.alt}>
             <h3 class="menu__item-subtitle">Меню ${this.title}</h3>
             <div class="menu__item-descr">${this.descr}</div>
             <div class="menu__item-divider"></div>
             <div class="menu__item-price">
-                <div class="menu__item-cost">Цена:</div>
-                <div class="menu__item-total"><span>${this.price}</span>${this.valute}/день</div>
+            <div class="menu__item-cost">Цена:</div>
+            <div class="menu__item-total"><span>${this.price}</span>${this.valute}/день</div>
             </div>`;
             this.parent.append(elem);
         }
         
     }
-    getResource('http://localhost:3000/menu')
-        .then(data => {
-            data.forEach(({img, altimg, title, descr, price}) => {
-                new MenuCards(img, altimg, title, descr, price, '.menu .container').render();
-            });
-        });
+    function checkURL(url) {
+
+        if (url === 'http://localhost:3000/menu') {
+            getResource('http://localhost:3000/menu')
+            .then(data => {
+                    data.forEach(({img, altimg, title, descr, price}) => {
+                        new MenuCards(img, altimg, title, descr, price, '.menu .container').render();
+                    });
+                });
+        } else {
+            new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 19, '.menu .container').render();
+
+            new MenuCards("img/tabs/post.jpg", "vegy", 'Меню "Постное"', "Меню 'Постное' - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 39, '.menu .container').render();
+
+            new MenuCards("img/tabs/elite.jpg","elite", "Меню 'Премиум'", "В меню 'Премиум' мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 49, '.menu .container').render();
+        }
+    }
+    // classes for cards
+    const getResource = async (url) => {
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+        
+
+        return await res.json();
+    };
+    checkURL('http://localhost:3000/menu1');
+
+    // getResource('http://localhost:3000/menu')
+    // .then(data => {
+    //         data.forEach(({img, altimg, title, descr, price}) => {
+    //             new MenuCards(img, altimg, title, descr, price, '.menu .container').render();
+    //         });
+    //     });
 
 
     // CREATE card with function, without class MenuCards
@@ -233,8 +257,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // }
 
-
-    // new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', '29', 75, '$', '.menu .container').render();
+    // new MenuCards("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 29, '.menu .container').render();
 
     // AJAX work with back-end and forms
     const forms = document.querySelectorAll('form');
@@ -324,7 +347,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
-    fetch('db.json')
-        .then(data => data.json())
-        .then(res => console.log(res));
+    // fetch('db.json')
+    //     .then(data => data.json())
+    //     .then(res => console.log(res));
 });
