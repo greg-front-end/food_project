@@ -329,7 +329,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const sliderWrapper = document.querySelector('.offer__slider-wrapper'),
           sliderInner = document.querySelector('.offer__slider-inner'),
           widthWrapper = window.getComputedStyle(sliderWrapper).width,
-          slidesTotal = document.querySelectorAll('.offer__slide'),totalSlides = document.querySelector('#total'),
+          slidesTotal = document.querySelectorAll('.offer__slide'),
+          slider = document.querySelector('.offer__slider'),
+          totalSlides = document.querySelector('#total'),
           currentSlide = document.querySelector('#current'),
           prevBtn = document.querySelector('.offer__slider-prev'),
           nextBtn = document.querySelector('.offer__slider-next');
@@ -367,6 +369,33 @@ window.addEventListener('DOMContentLoaded', () => {
         wrapper.style.width = width;
     }
 
+    // dot for slider
+    slider.style.position = 'relative';
+    const indicators = document.createElement('ol'),
+          dots = [];
+    indicators.classList.add('carousel-indicators');
+
+    slider.append(indicators);
+
+    function dotOpacity(arr) {
+        arr.forEach(item => item.style.opacity = '.5');
+        arr[sliderIndex - 1].style.opacity = 1;
+    }
+
+    for (let i = 0; i < slidesTotal.length; i++) {
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i + 1);
+        dot.classList.add('dot');
+
+        if (i === 0) {
+            dot.style.opacity = 1;
+        }
+
+        indicators.append(dot);
+        dots.push(dot);
+    }
+    
+
     nextBtn.addEventListener('click', function() {
         if (offset === +widthWrapper.slice(0, widthWrapper.length - 2) * (slidesTotal.length - 1)) {
             offset = 0;
@@ -381,6 +410,9 @@ window.addEventListener('DOMContentLoaded', () => {
         } else {
             sliderIndex++;
         }
+
+        dotOpacity(dots);
+
         currentSlide.textContent = getZero(sliderIndex);
     });
 
@@ -399,9 +431,27 @@ window.addEventListener('DOMContentLoaded', () => {
         } else {
             sliderIndex--;
         }
+
+        dotOpacity(dots);
+
         currentSlide.textContent = getZero(sliderIndex);
     });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
+
+            sliderIndex = slideTo;
+            offset = parseInt(widthWrapper) * (slideTo  - 1);
+
+            sliderInner.style.transform = `translateX(-${offset}px)`;
+
+            dotOpacity(dots);
     
+            currentSlide.textContent = getZero(sliderIndex);
+        });
+    });
+
     setPropertiesStyle(sliderInner, sliderWrapper, slidesTotal, widthWrapper);
 
     ///////////////////////////
