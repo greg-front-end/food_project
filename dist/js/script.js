@@ -332,11 +332,7 @@ window.addEventListener('DOMContentLoaded', () => {
           slidesTotal = document.querySelectorAll('.offer__slide'),totalSlides = document.querySelector('#total'),
           currentSlide = document.querySelector('#current'),
           prevBtn = document.querySelector('.offer__slider-prev'),
-          nextBtn = document.querySelector('.offer__slider-next'),
-          sliderText = document.querySelectorAll('.offer__advantages'),
-          sliderTextWrapper = document.querySelector('.slider__text-wrapper'),
-          widthTextWrapper = window.getComputedStyle(sliderTextWrapper).width,
-          sliderTextInner = document.querySelector('.slider__text-inner');
+          nextBtn = document.querySelector('.offer__slider-next');
 
     // Assign total value in numeric of total slides
     totalSlides.innerHTML = getZero(slidesTotal.length);
@@ -347,7 +343,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // Assign current value in numeric of current slide
     currentSlide.textContent = getZero(sliderIndex);
     let offset = 0;
-    let offsetText = 0;
     /* 
         todo
         1) Need receive total widh for inner slides
@@ -379,14 +374,7 @@ window.addEventListener('DOMContentLoaded', () => {
             offset += parseInt(widthWrapper);
         }
 
-        if (offsetText == parseInt(widthTextWrapper) * (sliderText.length - 1)) {
-            offsetText = 0;
-        } else {
-            offsetText += parseInt(widthTextWrapper);
-        }
-
         sliderInner.style.transform = `translateX(-${offset}px)`;
-        sliderTextInner.style.transform = `translateX(-${offsetText}px)`;
 
         if (sliderIndex === slidesTotal.length) {
             sliderIndex = 1;
@@ -404,14 +392,7 @@ window.addEventListener('DOMContentLoaded', () => {
             offset -= parseInt(widthWrapper);
         }
 
-        if (offsetText === 0) {
-            offsetText = parseInt(widthTextWrapper) * (sliderText.length - 1);
-        } else {
-            offsetText -= parseInt(widthTextWrapper);
-        }
-
         sliderInner.style.transform = `translateX(-${offset}px)`;
-        sliderTextInner.style.transform = `translateX(-${offsetText}px)`;
         
         if (sliderIndex === 1) {
             sliderIndex = slidesTotal.length;
@@ -420,8 +401,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         currentSlide.textContent = getZero(sliderIndex);
     });
-
-    setPropertiesStyle(sliderTextInner, sliderTextWrapper, sliderText, widthTextWrapper);
+    
     setPropertiesStyle(sliderInner, sliderWrapper, slidesTotal, widthWrapper);
 
     ///////////////////////////
@@ -434,33 +414,6 @@ window.addEventListener('DOMContentLoaded', () => {
         3) Add listener for btns
 
     */
-    // function showSlides(n) {
-
-    //     if (sliderIndex > slidesTotal.length) {
-    //         sliderIndex = 1;
-    //     }
-
-    //     if (sliderIndex < 1) {
-    //         sliderIndex = slidesTotal.length;
-    //     }
-
-    //     slidesTotal.forEach(item => item.style.display = 'none');
-    //     slidesTotal[sliderIndex - 1].style.display = 'block';
-
-    //     currentSlide.textContent = getZero(sliderIndex);
-    // }
-
-    // function plusSlides(n) {
-    //     showSlides(sliderIndex += n);
-    // }
-
-    // nextBtn.addEventListener('click', () => {
-    //     plusSlides(1);
-    // });
-
-    // prevBtn.addEventListener('click', () => {
-    //     plusSlides(-1);
-    // });
-    // showSlides(sliderIndex);
+    
 
 });
