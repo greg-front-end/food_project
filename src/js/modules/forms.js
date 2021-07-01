@@ -1,6 +1,9 @@
-function forms() {
+import {modalClose, openModal} from './modal';
+import {postData} from '../services/services';
+
+function forms(formSelector, modalTimerId) {
     // AJAX work with back-end and forms
-    const forms = document.querySelectorAll('form');
+    const forms = document.querySelectorAll(formSelector);
     const message = {
         loading: 'img/form/Spinner-3.gif',
         success: 'Thank you, we will soon call you back',
@@ -11,18 +14,6 @@ function forms() {
     forms.forEach(item => {
         bindPostData(item);
     });
-
-    const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: "POST",
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: data
-        });
-
-        return await res.json();
-    };
 
     function bindPostData(form) {
         form.addEventListener('submit', (e) => {
@@ -50,8 +41,8 @@ function forms() {
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             postData('http://localhost:3000/requests', json)
-            .then(() => {
-                // console.log(data);
+            .then((data) => {
+                console.log(data);
                 showThanksModal(message.success);
                 statusMessage.remove();
             }).catch(() => {
@@ -69,7 +60,7 @@ function forms() {
         const prevModalDialog = document.querySelector('.modal__dialog');
 
         prevModalDialog.classList.add('hide');
-        openModal();
+        openModal('.modal', modalTimerId);
 
         const thanksModal = document.createElement('div');
         thanksModal.classList.add('modal__dialog');
@@ -79,18 +70,18 @@ function forms() {
                 <div calss="modal__title">${message}</div>
             </div>
         `;
-        modal.append(thanksModal);
+        document.querySelector('.modal').append(thanksModal);
         setTimeout(() => {
             thanksModal.remove();
             prevModalDialog.classList.add('show');
             prevModalDialog.classList.remove('hide');
-            modalClose();
+            modalClose('.modal');
         }, 4000);
     }
 
-    // fetch('db.json')
-    //     .then(data => data.json())
-    //     .then(res => console.log(res));
+    fetch('db.json')
+        .then(data => data.json())
+        .then(res => console.log(res));
 
 }
-module.exports = forms;
+export default forms;

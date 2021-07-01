@@ -1,14 +1,14 @@
-function slider() {
+function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCounter, wrapper, inner}) {
     // Slider
-    const sliderWrapper = document.querySelector('.offer__slider-wrapper'),
-          sliderInner = document.querySelector('.offer__slider-inner'),
+    const sliderWrapper = document.querySelector(wrapper),
+          sliderInner = document.querySelector(inner),
           widthWrapper = window.getComputedStyle(sliderWrapper).width,
-          slidesTotal = document.querySelectorAll('.offer__slide'),
-          slider = document.querySelector('.offer__slider'),
-          totalSlides = document.querySelector('#total'),
-          currentSlide = document.querySelector('#current'),
-          prevBtn = document.querySelector('.offer__slider-prev'),
-          nextBtn = document.querySelector('.offer__slider-next');
+          slidesTotal = document.querySelectorAll(slide),
+          slider = document.querySelector(container),
+          totalSlides = document.querySelector(totalCounter),
+          currentSlide = document.querySelector(currentCounter),
+          prevBtn = document.querySelector(prevArrow),
+          nextBtn = document.querySelector(nextArrow);
 
     function getZero(num) {
         if (num >= 0 && num < 10) {
@@ -149,4 +149,4 @@ function slider() {
     */
 }
 
-module.exports = slider;
+export default slider;

@@ -117,4 +117,5 @@ function calc() {
         getDynamicInfo('#weight');
         getDynamicInfo('#age');
 }
-module.exports = calc;
+// module.exports = calc;
+export default calc;

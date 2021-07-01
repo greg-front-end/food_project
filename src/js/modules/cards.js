@@ -1,3 +1,5 @@
+import {getResource} from '../services/services';
+
 function cards() {
     // clases for cards 
     class MenuCards {
@@ -61,17 +63,7 @@ function cards() {
             new MenuCards("img/tabs/elite.jpg","elite", "Меню 'Премиум'", "В меню 'Премиум' мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 49, '.menu .container').render();
         }
     }
-    // classes for cards
-    const getResource = async (url) => {
-        const res = await fetch(url);
 
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-        }
-        
-
-        return await res.json();
-    };
     checkURL('http://localhost:3000/menu'); // ADD 1 FOR LOAD DB FROM JS FILE
 
     // getResource('http://localhost:3000/menu')
@@ -81,4 +73,4 @@ function cards() {
     //         });
     //     });
 }
-module.exports = cards;
+export default cards;
